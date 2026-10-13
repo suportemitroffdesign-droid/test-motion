@@ -3,7 +3,7 @@ from pathlib import Path
 import subprocess, json, hashlib, re, struct
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
-video=ROOT/'out'/'mitroff-intro.mp4'
+video=ROOT/'out'/'mitroff-intro-v2.mp4'
 assert video.is_file() and video.stat().st_size>100000, 'MP4 missing or empty'
 probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames',
  '-show_streams','-show_format','-of','json',str(video)],text=True))
@@ -50,5 +50,5 @@ report={'status':'passed','video':{'codec':v['codec_name'],'resolution':[v['widt
  'true_peak_dbtp':measured['input_tp']},'logo_original_sha256':logo_hash,
  'full_av_decode':'passed','fast_start':True,'size_bytes':video.stat().st_size,
  'mp4_sha256':hashlib.sha256(video.read_bytes()).hexdigest()}
-(ROOT/'out'/'validation.json').write_text(json.dumps(report,indent=2)+'\n')
+(ROOT/'out'/'validation-v2.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))

@@ -1,20 +1,21 @@
 {
+  "version": 2,
+  "bpm": 150,
   "sample_rate": 48000,
   "duration": 20.0,
-  "bpm": 144,
-  "normalization_target_lufs": -16,
+  "target_lufs": -14,
   "true_peak_ceiling_dbtp": -1.5,
   "premaster": {
-    "input_i": "-21.91",
-    "input_tp": "-5.22",
-    "input_lra": "10.70",
-    "input_thresh": "-32.55",
-    "output_i": "-15.10",
+    "input_i": "-19.16",
+    "input_tp": "-3.04",
+    "input_lra": "5.70",
+    "input_thresh": "-29.70",
+    "output_i": "-14.30",
     "output_tp": "-1.50",
-    "output_lra": "2.80",
-    "output_thresh": "-25.47",
+    "output_lra": "0.70",
+    "output_thresh": "-24.62",
     "normalization_type": "dynamic",
-    "target_offset": "-0.90"
+    "target_offset": "0.30"
   },
-  "method": "procedural FM/additive/noise synthesis; no third-party samples"
+  "method": "Original procedural synthesis; no external samples"
 }

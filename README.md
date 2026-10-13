@@ -1,62 +1,69 @@
-# MITROFF DESIGN — Motion intro com logo oficial e áudio
+# MITROFF DESIGN — Motion V2
 
-Atualização do projeto existente. Composição **MitroffIntro**: 1080 × 1920, 30 fps, 600 frames, 20 segundos. MP4 com vídeo H.264 e áudio AAC estéreo. Seis cenas de motion editorial, identidade monocromática, PNG original e trilha eletrônica original com efeitos sincronizados.
+Nova direção do **mesmo projeto Remotion**: preto, branco e azul, títulos centrais, tipografia cinética, peças em camadas, cortes na batida e interface responsiva. Composição **MitroffIntro**, 1080 × 1920, 30 fps, 600 frames / 20 s. Música original mais energética a 150 BPM e efeitos incorporados ao MP4, sem narração.
 
-## Baixar e publicar, sem programar
+## Baixar e publicar sem executar código
 
-Na branch `mitroff-logo-audio` do repositório, abra:
+Na branch `mitroff-motion-v2` deste repositório:
 
-- `out/mitroff-intro.mp4` — vídeo final com música e efeitos incorporados.
-- `out/mitroff-projeto.zip` — pacote completo: MP4 pronto, projeto editável, logo original, áudio master, stems e gerador.
+- `out/mitroff-intro-v2.mp4` — novo vídeo final, H.264 + AAC estéreo.
+- `out/mitroff-projeto-v2.zip` — pacote completo com MP4 pronto, fontes do projeto, logo original, fontes tipográficas licenciadas, master de áudio, stems e gerador.
+- `out/review-v2.jpg` — amostras do vídeo efetivamente renderizado.
+- `out/validation-v2.json` e `out/browser-playback-v2.json` — evidências de validação do arquivo.
 
-No GitHub, use **Download raw file** (ícone de seta para baixo). Se o repositório for privado, entre na conta com acesso. O ZIP pode ser extraído normalmente no Windows. O vídeo pode ser aberto no player do Windows e enviado ao Instagram Reels; não depende de outro arquivo de áudio. Não é necessário executar o projeto para publicar o MP4.
+Abra o arquivo no GitHub e clique em **Download raw file** (seta para baixo). Se o repositório for privado, entre na conta com acesso. O ZIP pode ser extraído pelo Windows. O MP4 já contém toda a trilha e os efeitos: basta abrir no player e enviar ao Reels. A versão anterior continua disponível na branch `mitroff-logo-audio`.
 
-## Logo e identidade
+## Direção e identidade
 
-`public/logo mitroff3.png` é o arquivo original extraído do ZIP enviado pelo usuário, sem alterações nos bytes. A logo preta é exibida sobre uma base branca para manter contraste. O canal alfa e todas as letras, formas e proporções permanecem intactos. O layout esconde apenas a grande margem transparente do PNG, sem cortar a área visível da marca. Não há filtros, redesenho, IA ou placeholder.
-
-A revelação da logo ocorre a partir de 15,83 s, por uma máscara horizontal e um movimento suave da base. A marca inteira permanece visível por mais de 2 segundos ao final. A identidade usa preto e branco; o azul provisório foi removido.
+- Fundo varia entre preto, papel branco e azul; não há longa sequência de fundo preto vazio.
+- Uma palavra principal por cena, exceto o serviço LANDING PAGES em duas linhas e as três palavras sucessivas de posicionamento.
+- Fontes **Anton** e **Space Grotesk**, incluídas localmente e aguardadas antes do render. Licenças SIL Open Font License incluídas em `public/fonts/`; não há download de fontes durante o vídeo.
+- Azul editável em `src/brand.ts`: `#386BFF`, retomado da referência inicial do projeto. O PNG oficial é monocromático e não determina um HEX azul oficial. Se houver manual de identidade, substitua pelo HEX correspondente.
+- `public/logo mitroff3.png` é o PNG original recebido no ZIP, preservado byte por byte. O hash está em `scripts/logo-source.json`. A imagem usa corretamente o alfa sobre o fundo branco da cena inteira; não está numa placa de cor diferente. Todas as letras, proporções e formas são preservadas, sem filtros ou redesenho.
+- A marca oficial é revelada por máscara e movimento uniforme a partir de 16 s, ficando inteira e legível por cerca de 3 s no final.
+- Os layouts apresentados são estudos autorais, não portfólio atribuído a clientes ou marcas fictícias.
 
 ## Executar e renderizar no Windows
 
-1. Instale **Node.js 22 ou 24 LTS**, que inclui npm.
-2. Extraia `mitroff-projeto.zip`. Na pasta com `package.json`, clique com o botão direito e escolha **Abrir no Terminal**.
-3. Execute `npm ci` (só na primeira instalação ou quando atualizar dependências).
-4. Execute `npm run studio`. Abra o endereço exibido e selecione **MitroffIntro**. A prévia inclui áudio; se o navegador bloquear reprodução, clique para iniciar.
-5. Execute `npm run typecheck` para validar TypeScript.
-6. Execute `npm run render`. Aguarde o término. Saída: `out/mitroff-intro.mp4`, com H.264 + AAC a 320 kbps, CRF 18.
-7. Sem áudio, se desejar: `npm run render:silent` (saída separada: `out/mitroff-intro-silent.mp4`).
-8. Frame da assinatura: `npm run still`.
+1. Instale **Node.js 22 ou 24 LTS** (inclui npm).
+2. Extraia o ZIP. Na pasta com `package.json`, clique com o botão direito e selecione **Abrir no Terminal**.
+3. Execute `npm ci`.
+4. Execute `npm run studio`; abra o endereço exibido e escolha **MitroffIntro**. Clique para reproduzir caso o navegador bloqueie áudio automático.
+5. Execute `npm run typecheck`.
+6. Execute `npm run render`; aguarde o término. Saída: `out/mitroff-intro-v2.mp4`, com H.264, AAC 320 kbps e CRF 18.
+7. Para imagem final: `npm run still`. Para versão silenciosa em outro arquivo: `npm run render:silent`.
 
-O Remotion obtém seu navegador de renderização automaticamente quando necessário. Alternativa com Chrome instalado: `npm run render -- --browser-executable="C:\Program Files\Google\Chrome\Application\chrome.exe"`. FFmpeg separado não é necessário para a renderização normal do Remotion. Os WAVs prontos estão no ZIP; Python não é necessário para executar ou renderizar o projeto.
+O navegador de renderização é obtido pelo Remotion quando necessário. Alternativa com Chrome instalado:
+
+`npm run render -- --browser-executable="C:\Program Files\Google\Chrome\Application\chrome.exe"`
+
+Não precisa de Python ou FFmpeg separado para o render normal: o master WAV pronto já está incluído. Confira a prévia do Instagram no seu aparelho, pois a interface pode variar. Os títulos e logo têm margens laterais seguras; detalhes decorativos podem avançar até as bordas.
 
 ## Editar
 
-- `src/brand.ts`: textos, paleta e caminho da logo.
-- `src/MitroffIntro.tsx`: seis componentes de cena e movimentos existentes. Usa `Sequence`, `interpolate()` e `spring()`; não depende do relógio real ou de aleatoriedade durante o render.
-- `src/style.css`: grid, tipografia e espaçamento.
-- `src/timing.ts`: tempos de entradas, revelação e transformação mobile.
-- `scripts/audio-cues.json`: efeitos posicionados em frames. Ao alterar tempos, mantenha este arquivo e `timing.ts` coerentes e regenere o áudio.
-- `public/audio/`: master e stems de música/efeitos, estéreo a 48 kHz. Leia `PROVENANCE.md` para origem e licença CC0 do áudio gerado. Não há narração ou música comercial.
+- `src/brand.ts`: títulos, palavras de posicionamento, cores e logo.
+- `src/scenes/`: seis cenas separadas e editáveis.
+- `src/components/Motion.tsx`: spring, máscaras por letra, blur óptico nas entradas, grid e wipes.
+- `src/style.css`: layouts e acabamento visual.
+- `scripts/audio-cues.json`: **única fonte dos tempos**, importada em `src/timing.ts` e lida pelo gerador de áudio. Atualize também as durações da composição caso mude o roteiro total.
+- `public/audio/mitroff-master.wav`: nova mixagem pronta. `music.wav` e `sfx.wav`: stems para remixar.
 
-Para remixar, use `music.wav` e `sfx.wav` no editor de áudio de sua preferência. Para regenerar a síntese, opcionalmente instale Python, `numpy`, `scipy` e FFmpeg; execute `python scripts/generate-audio.py`. O gerador não usa rede, samples externos ou chaves de API.
+Para regenerar o áudio, opcionalmente instale Python, numpy, scipy e FFmpeg e execute `python scripts/generate-audio.py`. Toda a síntese é original, sem samples externos; os WAVs são disponibilizados sob CC0, para uso comercial sem atribuição. Veja `public/audio/PROVENANCE.md`. A licença de áudio não transfere direitos sobre a marca nem altera as licenças das dependências.
 
-## Roteiro e sincronização
+## Timeline
 
-| Cena | Frames (fim exclusivo) | Conteúdo |
+| Cena | Frames (fim exclusivo) | Movimento |
 |---|---|---|
-| 1 | 0–90 | Esse perfil estava quieto demais; efeitos nas entradas 4, 11 e 18 |
-| 2 | 90–150 | Resolvi começar pelo que sei fazer; transição para formas |
-| 3 | 150–250 | DESIGN; impacto, peças em camadas e detalhes digitais |
-| 4 | 250–350 | EDIÇÃO DE VÍDEO; cortes em 250, 275, 300 e 325 |
-| 5 | 350–450 | LANDING PAGES; montagem e desktop para mobile |
-| 6 | 450–600 | Lucas, logo original; revelação em 475 e resolução musical em 525 |
+| MITROFF | 0–72 | Entrada por letras, escala, linhas azuis e contornos |
+| DESIGN | 72–168 | Peças entram em direções diferentes e se reorganizam |
+| VÍDEOS | 168–264 | Cortes, alternância de painéis, barras e timeline na batida |
+| LANDING PAGES | 264–360 | Interface montada em camadas; desktop vira mobile continuamente |
+| Posicionamento | 360–456 | CRIATIVIDADE → MOVIMENTO → PRESENÇA; fundos e formas mudam |
+| Logo oficial | 456–600 | Sweep azul, revelação da marca, acabamento sobre branco |
 
-A grade musical usa 144 BPM, ou 12,5 frames por batida. Títulos em 150, 250 e 350 coincidem com essa grade; efeitos acompanham também as entradas individuais entre batidas. O final retira novos ataques, resolve a harmonia e deixa a cauda decair suavemente.
+150 BPM equivale a 12 frames por batida. Transições e entradas principais usam essa grade. As palavras de posicionamento entram em 360, 396 e 432; a logo em 480. A resolução musical ocorre em 540, retirando os ataques e deixando a cauda terminar suavemente.
 
-Margens principais de 96 px, topo e rodapé reservados à interface do Reels. Confira a prévia do Instagram antes de publicar, pois a interface varia por aparelho. Os layouts de design e landing page são estudos autorais identificados, sem marcas clientes ou afirmações de portfólio real.
-
-## Validação e ambiente Linux
+## Validação no ambiente usado
 
 `npm ci --cache /tmp/mitroff-npm --no-audit --no-fund`
 
@@ -66,8 +73,8 @@ Margens principais de 96 px, topo e rodapé reservados à interface do Reels. Co
 
 `npm run render -- --browser-executable=/usr/bin/chromium --concurrency=2`
 
-`python3 scripts/verify-output.py` (precisa de FFmpeg/FFprobe e numpy; valida o MP4 real, áudio e hash da logo).
+`python3 scripts/verify-output.py` — usa FFmpeg/FFprobe e numpy: conta os 600 frames, decodifica vídeo e áudio completos, mede volume/pico e verifica o hash da logo.
 
-Resultado da execução atual: `out/validation.json`. O MP4 foi decodificado integralmente para verificar vídeo e áudio. A validação não substitui a revisão artística no seu aparelho nem representa uma publicação no Instagram. O Studio deve ser reiniciado quando o ambiente for restaurado.
+`node scripts/verify-browser.cjs` — reproduz o MP4 real no Chromium e verifica avanço de tempo, frames decodificados e busca para 18 segundos. Por padrão usa `/usr/bin/chromium`; aceita outro executável como primeiro argumento.
 
-Remotion e dependências têm licenças próprias: https://www.remotion.dev/license.
+O Studio precisa ser reiniciado ao restaurar o ambiente. A validação técnica e a revisão visual não equivalem a uma publicação no Instagram. Remotion e dependências mantêm suas próprias licenças: https://www.remotion.dev/license.

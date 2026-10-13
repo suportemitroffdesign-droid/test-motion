@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "video": {
+    "codec": "h264",
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": "30/1",
+    "frames": 600,
+    "duration": 20.0,
+    "pixel_format": "yuvj420p"
+  },
+  "audio": {
+    "codec": "aac",
+    "channels": 2,
+    "sample_rate": 48000,
+    "duration": 20.010666666666665,
+    "rms": 0.1641191989183426,
+    "peak": 0.8578856587409973,
+    "last_100ms_rms": 1.52680222527124e-05,
+    "integrated_lufs": "-14.23",
+    "true_peak_dbtp": "-1.29"
+  },
+  "logo_original_sha256": "12a6cd96469bdf43186efd4b30d5b644a1a4f3e04d8e05d675d095bd5fa17be0",
+  "full_av_decode": "passed",
+  "fast_start": true,
+  "size_bytes": 6561606,
+  "mp4_sha256": "5110d7a93dfcb6827f02ef71bd7e3390b8376b1e06a6d68397543adc4c431b67"
+}

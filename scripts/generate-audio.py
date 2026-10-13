@@ -1,171 +1,148 @@
-"""MITROFF / original score and sound design, 48 kHz stereo.
-No recordings, loops, external music or samples. Deterministic additive/FM synthesis.
-Optional regeneration: Python 3.10+, numpy, scipy and FFmpeg.
+"""MITROFF V2 / 150 BPM electronic score + frame-accurate sound design.
+Original procedural oscillators, filtered noise and FM. No third-party audio.
+Optional regeneration: Python + numpy + scipy + FFmpeg. WAVs are bundled.
 """
 from pathlib import Path
 import json, subprocess, re, wave
 import numpy as np
 from scipy.signal import butter, sosfilt
+ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/'public'/'audio';OUT.mkdir(exist_ok=True,parents=True)
+C=json.loads((ROOT/'scripts'/'audio-cues.json').read_text())
+SR=48000;D=C['duration_frames']/C['fps'];N=int(SR*D);B=60/C['bpm']
+rng=np.random.default_rng(29017)
+music=np.zeros((N,2));sfx=np.zeros_like(music)
+def freq(m):return 440*2**((m-69)/12)
+def time(d):return np.arange(round(SR*d))/SR
+def add(bus,x,start,gain=1,pan=0):
+ a=round(start*SR)
+ if x.ndim==1:x=np.column_stack((x*np.sqrt((1-pan)/2),x*np.sqrt((1+pan)/2)))
+ if a<0:x=x[-a:];a=0
+ length=min(len(x),N-a)
+ if length>0:bus[a:a+length]+=x[:length]*gain
+def noise(d,cut,kind='lowpass'):
+ return sosfilt(butter(2,cut,btype=kind,fs=SR,output='sos'),rng.standard_normal(round(d*SR)))
+def envelope(t,attack=.004,release=.035):
+ return np.minimum(t/attack,1)*np.minimum((t[-1]-t)/release,1).clip(0)
+def saw(t,hz,harmonics=7):
+ return sum(np.sin(2*np.pi*hz*k*t)/k for k in range(1,harmonics+1))/1.8
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'public' / 'audio'
-OUT.mkdir(parents=True, exist_ok=True)
-CUES = json.loads((ROOT / 'scripts' / 'audio-cues.json').read_text())
-SR, DURATION = 48000, CUES['duration_frames'] / CUES['fps']
-N = int(SR * DURATION)
-BEAT = 60 / CUES['bpm']
-rng = np.random.default_rng(20261013)
-music = np.zeros((N, 2), dtype=np.float64)
-sfx = np.zeros_like(music)
+# Syncopated D-minor groove. The chord sequence follows the six cuts.
+sections=[(0,2.4,[50,57,60,64]),(2.4,3.2,[46,53,57,60]),
+ (5.6,3.2,[48,55,58,62]),(8.8,3.2,[53,57,60,64]),
+ (12,3.2,[46,53,57,60]),(15.2,2.8,[50,57,60,64])]
+def chord_at(t):return next(notes for start,length,notes in reversed(sections) if t>=start)
+# Tight chord stabs: a rhythmic, slightly detuned supersaw, never a calm pad bed.
+for i in range(45):
+ start=i*B
+ if start>=18:break
+ offsets=[0,.75] if i%2==0 else [.5]
+ for off in offsets:
+  at=start+off*B
+  if at>=18:continue
+  t=time(.32);gate=(1-np.exp(-t*240))*np.exp(-t*12)*envelope(t)
+  for k,m in enumerate(chord_at(at)):
+   hz=freq(m+12)
+   x=.6*saw(t,hz,5)+.4*saw(t,hz*1.003,5)
+   add(music,x*gate,at,.052 if at<5.6 else .067,pan=(k-1.5)*.35)
+   add(music,x*gate,at+B*.75,.011,pan=-(k-1.5)*.35)
 
-def note(n): return 440 * 2 ** ((n - 69) / 12)
-def clock(d): return np.arange(int(SR * d)) / SR
+# Driving offbeat bass with pitch attack and audible midrange body.
+for i in range(90):
+ start=i*B/2
+ if start>=18:break
+ m=chord_at(start)[0]-12+(12 if i%8==7 else 0)
+ t=time(.195);hz=freq(m)
+ phase=2*np.pi*hz*(t+.0018*(1-np.exp(-t*80)))
+ x=np.sin(phase)+.3*np.sin(phase*2)+.11*np.sin(phase*3)
+ env=envelope(t,.005,.035)*np.exp(-t*3)
+ # Duck the downbeat and let the offbeat push forward.
+ gain=.14 if i%2==0 else .245
+ add(music,np.tanh(x*1.15)*env,start+.014,gain)
 
-def pan(signal, p=0):
-    return np.column_stack((signal * np.sqrt((1-p)/2), signal * np.sqrt((1+p)/2)))
+# Kick, dry snare/clap and offbeat hats. Beat is already present at the opening.
+for i in range(45):
+ at=i*B
+ if at>=18:break
+ t=time(.32);phase=2*np.pi*(49*t+100*.025*(1-np.exp(-t/.025)))
+ kick=np.sin(phase)*np.exp(-t*15)+noise(.32,4600)*np.exp(-t*250)*.18
+ add(music,kick,at,.43 if at<15.2 else .34)
+ if i%2==1:
+  t=time(.18)
+  clap=noise(.18,[1100,9000],'bandpass')*np.exp(-t*34)
+  body=np.sin(2*np.pi*180*t)*np.exp(-t*29)*.22
+  add(music,clap+body,at,.19 if at>=2.4 else .12,pan=.05)
+ for off in [0,.5]:
+  t=time(.115 if off else .05)
+  hh=noise(t[-1]+1/SR,7000,'highpass')*np.exp(-t*(42 if off else 95))
+  add(music,hh,at+off*B,.068 if off else .042,pan=.3 if off else -.2)
+ # Sparse sixteenth fills at scene boundaries, not busy all the time.
+ if i in [5,13,21,29,37]:
+  for off in [.5,.75]:
+   t=time(.075);x=noise(.075,2500,'highpass')*np.exp(-t*48)
+   add(music,x,at+off*B,.095,pan=off-.6)
 
-def add(bus, signal, start, gain=1, p=0):
-    a=int(round(start*SR)); signal=pan(signal,p) if signal.ndim==1 else signal
-    if a<0: signal=signal[-a:]; a=0
-    count=min(len(signal), N-a)
-    if count>0: bus[a:a+count]+=signal[:count]*gain
+# Bright rhythmic lead: short FM accents with ping-pong delay, builds from scene 2.
+melody=[74,77,81,84,81,77,76,72]
+for i in range(90):
+ at=i*B/2
+ if at>=18:break
+ if at<2.4 and i%4:continue
+ if i%8 in [2,6]:continue
+ m=melody[i%8]+(-5 if 2.4<=at<5.6 or 12<=at<15.2 else 0)
+ hz=freq(m);t=time(.45)
+ env=(1-np.exp(-t*400))*np.exp(-t*14)
+ x=np.sin(2*np.pi*hz*t+2.1*np.exp(-t*25)*np.sin(2*np.pi*hz*2*t))*env
+ level=.065 if at<5.6 else .09
+ p=.45 if i%2 else -.45
+ add(music,x,at,level,p);add(music,x,at+B*.75,level*.24,-p)
 
-def fade_env(t, attack=.008, release=.08):
-    return np.minimum(t/attack,1)*np.minimum((t[-1]-t)/release,1).clip(0)
+# Frame accurate impacts, stereo whooshes, tiny digital ticks.
+def hit(frame,level=.25):
+ t=time(.4);phase=2*np.pi*(55*t+75*.025*(1-np.exp(-t/.025)))
+ x=np.sin(phase)*np.exp(-t*19)+noise(.4,3800)*np.exp(-t*130)*.2
+ add(sfx,x,frame/30,level)
+for f in C['title_impacts']:hit(f,.3 if f in [0,480] else .24)
+for frame in C['transitions']:
+ t=time(.4);env=np.sin(np.pi*np.arange(len(t))/len(t))**2
+ x=noise(.4,[850,8500],'bandpass')*env
+ add(sfx,x,frame/30-.2,.19,-.4);add(sfx,x,frame/30-.18,.12,.4)
+for family in ['word_entries','design_details','video_cuts','web_details']:
+ for i,f in enumerate(C[family]):
+  t=time(.095);hz=freq(79+[0,3,7][i%3])
+  x=np.sin(2*np.pi*hz*t+np.sin(2*np.pi*hz*3*t))*np.exp(-t*50)
+  add(sfx,x,f/30,.037 if family=='word_entries' else .06,pan=(i%3-1)*.4)
+# Risers carry the ear through major sections without excessive impact noise.
+for end in [5.6,12,15.2]:
+ t=time(.65);env=(t/.65)**2*(1-t/.65)**.25
+ x=noise(.65,[1000,7000],'bandpass')*env
+ add(sfx,x,end-.65,.14)
+# Strong final logo bloom, then an intentional resolved chord with a clean tail.
+for frame,amp in [(480,.042),(540,.07)]:
+ t=time(2.0);env=(1-np.exp(-t*60))*np.exp(-t*3.5)
+ for k,m in enumerate([62,69,72,76]):
+  x=(np.sin(2*np.pi*freq(m)*t)+.15*np.sin(2*np.pi*freq(m)*2*t))*env
+  add(sfx,x,frame/30,amp,pan=(k-1.5)*.3)
 
-def filtered_noise(d, freq, kind='lowpass'):
-    return sosfilt(butter(2, freq, btype=kind, fs=SR, output='sos'),rng.standard_normal(int(d*SR)))
-
-# Warm, wide chords: Dm9 / Bbmaj7 / Cadd9 / Fmaj7 / Dm9.
-chords = [(0,5,[50,57,60,64,65]),(5,10/3,[46,53,57,60,62]),
-          (25/3,10/3,[48,55,60,62,64]),(35/3,10/3,[41,53,57,60,64]),
-          (15,2.5,[50,57,60,64,65])]
-for start, length, notes in chords:
-    t=clock(length+1.4)
-    gate=np.minimum(t/.42,1)*np.exp(-np.maximum(t-length,0)*3.7)
-    for k,n in enumerate(notes):
-        freq=note(n)
-        # Detuned sine/triangle-like harmonics, low in the mix.
-        osc=(np.sin(2*np.pi*freq*t)+.19*np.sin(2*np.pi*freq*2*t)+.08*np.sin(2*np.pi*freq*3*t))/1.27
-        other=np.sin(2*np.pi*(freq*1.0018)*t+.6)
-        signal=.62*osc+.38*other
-        add(music,signal*gate,start,.045,p=(k-2)*.3)
-
-# Original FM pluck, not a sampled melody. Sparse opening -> eight-note drive.
-for i in range(84):
-    start=i*BEAT/2
-    if start>=17.5: break
-    if start<3 and i%4: continue
-    if 3<=start<5 and i%2: continue
-    notes=[74,77,81,84,76,81,77,72]
-    shift=0 if start<5 or start>=15 else (-5 if start<25/3 else (-2 if start<35/3 else 3))
-    freq=note(notes[i%len(notes)]+shift)
-    t=clock(.7)
-    env=(1-np.exp(-t*450))*np.exp(-t*8.5)
-    fm=1.8*np.exp(-t*12)*np.sin(2*np.pi*freq*2*t)
-    tone=np.sin(2*np.pi*freq*t+fm)*env
-    amp=.047 if start<5 else (.065 if start<15 else .035)
-    p=np.sin(i*1.7)*.5
-    add(music,tone,start,amp,p)
-    add(music,tone,start+.156,amp*.24,-p)
-    add(music,tone,start+.312,amp*.1,p)
-
-# Kick, sidechained sub, restrained snare/clap, and textured hats.
-for i in range(42):
-    start=i*BEAT
-    if start>=17.5: break
-    active=start>=5 or (i%2==0 and start<15)
-    if active:
-        t=clock(.34)
-        phase=2*np.pi*(48*t+85*.028*(1-np.exp(-t/.028)))
-        kick=np.sin(phase)*np.exp(-t*15)+(filtered_noise(.34,3600)*np.exp(-t*180)*.12)
-        add(music,kick,start,.27 if start>=5 else .16)
-    root=50 if start<5 or start>=15 else (46 if start<25/3 else (48 if start<35/3 else 41))
-    if start>=3 and (start<15 or i%2==0):
-        t=clock(.39);freq=note(root-12)
-        bass=(np.sin(2*np.pi*freq*t)+.18*np.sin(2*np.pi*freq*2*t))
-        bass*=np.minimum(t/.025,1)*np.minimum((.39-t)/.08,1)
-        bass*=.25+.75*(1-np.exp(-t*12))
-        add(music,bass,start+.015,.17)
-    if start>=5 and start<15 and i%2==1:
-        t=clock(.22)
-        noise=filtered_noise(.22,1400,'highpass')
-        clap=noise*np.exp(-t*32)*(.4+.6*np.sin(t*800)**2)
-        snare=np.sin(2*np.pi*178*t)*np.exp(-t*32)*.15
-        add(music,clap+snare,start,.08,p=.08)
-    if 3<=start<17.5:
-        for off in [0,.5]:
-            t=clock(.09)
-            hat=filtered_noise(.09,6500,'highpass')*np.exp(-t*65)
-            add(music,hat,start+off*BEAT,.045 if start>=5 else .022,p=-.25 if off else .3)
-
-# Frame-exact sound design.
-def impact(frame,gain=.24):
-    t=clock(.6)
-    tone=np.sin(2*np.pi*(62*t+50*.032*(1-np.exp(-t/.032))))*np.exp(-t*13)
-    click=filtered_noise(.6,2200)*np.exp(-t*110)*.18
-    add(sfx,tone+click,frame/30,gain)
-
-for frame in CUES['transitions']:
-    t=clock(.52)
-    # Smooth, band-limited stereo air sweep; peak sits precisely at the cut.
-    x=filtered_noise(.52,[600,7000],'bandpass')
-    env=np.sin(np.pi*np.arange(len(t))/len(t))**2
-    mod=.5+.5*np.sin(2*np.pi*(120*t+1700*t*t))
-    swoosh=x*env*mod
-    add(sfx,swoosh,frame/30-.26,.13,p=-.45)
-    add(sfx,swoosh,frame/30-.23,.095,p=.45)
-for f in CUES['title_impacts']: impact(f)
-impact(CUES['logo_reveal'],.3)
-for j,f in enumerate(CUES['word_entries']):
-    t=clock(.12)
-    sound=np.sin(2*np.pi*note(69+j%3*3)*t+np.sin(2*np.pi*1800*t)*np.exp(-t*65))*np.exp(-t*45)
-    add(sfx,sound,f/30,.08,p=(j%3-1)*.2)
-for family in ['design_details','video_cuts','web_details']:
-    for i,f in enumerate(CUES[family]):
-        t=clock(.18);freq=note(79+[0,3,7,10][i%4])
-        sound=(np.sin(2*np.pi*freq*t+1.3*np.sin(2*np.pi*freq*2*t)*np.exp(-t*30))*.7+filtered_noise(.18,5000)*.15)
-        sound*=np.minimum(t/.004,1)*np.exp(-t*30)
-        add(sfx,sound,f/30,.055,p=(i%3-1)*.4)
-# Logo bloom and a resolved minor ninth tail, with no new attacks after 17.5 s.
-for frame in [CUES['logo_reveal'],CUES['resolution']]:
-    t=clock(2.5); env=(1-np.exp(-t*30))*np.exp(-t*2.7)
-    for k,n in enumerate([62,69,72,76]):
-        tone=np.sin(2*np.pi*note(n)*t+.2*np.sin(2*np.pi*note(n)*2*t))*env
-        add(sfx,tone,frame/30,.034,p=(k-1.5)*.3)
-
-# Short stereo room/delay; tails end smoothly within the 600-frame composition.
+# Short room on FX; modest stereo delays. No long washed-out reverb.
 for bus in [music,sfx]:
-    dry=bus.copy()
-    for delay,amount in [(.083,.1),(.167,.08),(.251,.045)]:
-        shift=int(delay*SR);bus[shift:]+=dry[:-shift,::-1]*amount
-    t=np.arange(N)/SR
-    tail=np.minimum((DURATION-t)/.8,1).clip(0)
-    head=np.minimum(t/.02,1)
-    bus*= (tail*head)[:,None]
+ dry=bus.copy()
+ for delay,gain in [(.073,.035),(.15,.025),(.24,.014)]:
+  shift=round(delay*SR);bus[shift:]+=dry[:-shift,::-1]*gain
+ t=np.arange(N)/SR
+ bus*=np.minimum(t/.004,1)[:,None]*np.minimum((D-t)/.55,1).clip(0)[:,None]
+ bus[:]=np.tanh(bus*1.15)/1.15
 
-def wav(path,signal):
-    signal=np.clip(signal,-.999,.999)
-    with wave.open(str(path),'wb') as w:
-        w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR)
-        w.writeframes(np.rint(signal*32767).astype('<i2').tobytes())
-
-wav(OUT/'music.wav',music)
-wav(OUT/'sfx.wav',sfx)
-mix=music+sfx
-peak=np.max(np.abs(mix));mix*=min(1,.88/peak)
-wav(OUT/'mix-premaster.wav',mix)
-# Trusted FFmpeg loudness normalization: -16 LUFS integrated, -1.5 dBTP ceiling.
-measure=subprocess.run(['ffmpeg','-hide_banner','-i',str(OUT/'mix-premaster.wav'),'-af',
- 'loudnorm=I=-16:TP=-1.5:LRA=8:print_format=json','-f','null','-'],capture_output=True,text=True,check=True)
-stats=json.loads(re.findall(r'\{\s*"input_i".*?\}',measure.stderr,re.S)[-1])
-settings=(f"loudnorm=I=-16:TP=-1.5:LRA=8:measured_I={stats['input_i']}:"
- f"measured_TP={stats['input_tp']}:measured_LRA={stats['input_lra']}:"
- f"measured_thresh={stats['input_thresh']}:offset={stats['target_offset']}:linear=true")
-subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-i',str(OUT/'mix-premaster.wav'),
- '-af',settings,'-ar',str(SR),'-c:a','pcm_s16le',str(OUT/'mitroff-master.wav')],check=True)
+def write(path,x):
+ with wave.open(str(path),'wb') as w:
+  w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR)
+  w.writeframes(np.rint(np.clip(x,-.999,.999)*32767).astype('<i2').tobytes())
+write(OUT/'music.wav',music);write(OUT/'sfx.wav',sfx)
+mix=music+sfx;mix*=min(1,.85/np.max(np.abs(mix)));write(OUT/'mix-premaster.wav',mix)
+result=subprocess.run(['ffmpeg','-hide_banner','-i',str(OUT/'mix-premaster.wav'),'-af','loudnorm=I=-14:TP=-1.5:LRA=7:print_format=json','-f','null','-'],capture_output=True,text=True,check=True)
+measured=json.loads(re.findall(r'\{\s*"input_i".*?\}',result.stderr,re.S)[-1])
+filt=(f"loudnorm=I=-14:TP=-1.5:LRA=7:measured_I={measured['input_i']}:measured_TP={measured['input_tp']}:measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:offset={measured['target_offset']}:linear=true")
+subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-i',str(OUT/'mix-premaster.wav'),'-af',filt,'-ar','48000','-c:a','pcm_s16le',str(OUT/'mitroff-master.wav')],check=True)
 (OUT/'mix-premaster.wav').unlink()
-(OUT/'audio-analysis.json').write_text(json.dumps({'sample_rate':SR,'duration':DURATION,
- 'bpm':CUES['bpm'],'normalization_target_lufs':-16,'true_peak_ceiling_dbtp':-1.5,
- 'premaster':stats,'method':'procedural FM/additive/noise synthesis; no third-party samples'},indent=2))
-print('Score, SFX stems and normalized master written:',OUT)
+(OUT/'audio-analysis.json').write_text(json.dumps({'version':2,'bpm':C['bpm'],'sample_rate':SR,'duration':D,'target_lufs':-14,'true_peak_ceiling_dbtp':-1.5,'premaster':measured,'method':'Original procedural synthesis; no external samples'},indent=2))
+print('V2 score + SFX generated: 150 BPM, 48 kHz stereo.')
