@@ -3,7 +3,7 @@ from pathlib import Path
 import subprocess, json, hashlib, re, struct
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
-video=ROOT/'out'/'mitroff-intro-v2.mp4'
+video=ROOT/'out'/'mitroff-intro-v3-preview.mp4'
 assert video.is_file() and video.stat().st_size>100000, 'MP4 missing or empty'
 probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames',
  '-show_streams','-show_format','-of','json',str(video)],text=True))
@@ -42,7 +42,7 @@ assert order.index('moov')<order.index('mdat'), 'MP4 needs fast-start remux'
 measure=subprocess.run(['ffmpeg','-hide_banner','-i',str(video),'-vn','-af',
  'loudnorm=I=-16:TP=-1.5:LRA=8:print_format=json','-f','null','-'],capture_output=True,text=True,check=True)
 measured=json.loads(re.findall(r'\{\s*"input_i".*?\}',measure.stderr,re.S)[-1])
-report={'status':'passed','video':{'codec':v['codec_name'],'resolution':[v['width'],v['height']],
+report={'status':'passed','palette_status':'pending_official_blue_hex','video':{'codec':v['codec_name'],'resolution':[v['width'],v['height']],
  'fps':v['r_frame_rate'],'frames':int(v['nb_read_frames']),'duration':float(v['duration']),
  'pixel_format':v['pix_fmt']},'audio':{'codec':a['codec_name'],'channels':a['channels'],
  'sample_rate':int(a['sample_rate']),'duration':len(samples)/48000,'rms':rms,
@@ -50,5 +50,5 @@ report={'status':'passed','video':{'codec':v['codec_name'],'resolution':[v['widt
  'true_peak_dbtp':measured['input_tp']},'logo_original_sha256':logo_hash,
  'full_av_decode':'passed','fast_start':True,'size_bytes':video.stat().st_size,
  'mp4_sha256':hashlib.sha256(video.read_bytes()).hexdigest()}
-(ROOT/'out'/'validation-v2.json').write_text(json.dumps(report,indent=2)+'\n')
+(ROOT/'out'/'validation-v3.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))

@@ -2,7 +2,8 @@ import React from 'react';
 import {AbsoluteFill,Audio,Sequence,staticFile} from 'remotion';
 import {brand} from './brand';
 import {timing} from './timing';
-import {FontGate,Wipe} from './components/Motion';
+import {FontGate} from './components/Motion';
+import {Portal} from './components/InterfaceMotion';
 import {Opening} from './scenes/Opening';
 import {Design} from './scenes/Design';
 import {Video} from './scenes/Video';
@@ -16,5 +17,5 @@ const scenes=[Opening,Design,Video,Landing,Positioning,Finale];
 export const MitroffIntro:React.FC=()=> <AbsoluteFill className="mitroff" style={{background:brand.background,'--accent':brand.accent,'--ink':brand.background,'--paper':brand.foreground} as React.CSSProperties}>
  <FontGate/><Audio src={staticFile('audio/mitroff-master.wav')}/>
  {scenes.map((Scene,i)=><Sequence key={i} from={timing.scenes[i]} durationInFrames={(timing.scenes[i+1]??600)-timing.scenes[i]}><Scene/></Sequence>)}
- {timing.transitions.map((frame,i)=><Sequence key={frame} from={frame-5} durationInFrames={11}><Wipe reverse={i%2===1}/></Sequence>)}
+ {timing.transitions.map((frame,i)=><Sequence key={frame} from={frame-8} durationInFrames={17}><Portal kind={i}/></Sequence>)}
 </AbsoluteFill>;

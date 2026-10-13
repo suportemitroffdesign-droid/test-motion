@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "mp4_sha256": "43d84ed39da267da4f2869fe0cc738c356ab4fce7cd8c05b0a80a12b411929ea",
+  "method": "Decoded thumbnail frame differences during settled service scenes",
+  "scenes": {
+    "design": {
+      "mean_frame_change": 0.719,
+      "longest_static_span_frames": 0,
+      "range_analyzed": [
+        115,
+        190
+      ]
+    },
+    "editing": {
+      "mean_frame_change": 0.9517,
+      "longest_static_span_frames": 0,
+      "range_analyzed": [
+        235,
+        310
+      ]
+    },
+    "landing": {
+      "mean_frame_change": 1.6015,
+      "longest_static_span_frames": 0,
+      "range_analyzed": [
+        355,
+        430
+      ]
+    }
+  }
+}

@@ -1,27 +1,23 @@
 import React from 'react';
 import {AbsoluteFill,useCurrentFrame} from 'remotion';
-import {brand as b} from '../brand';
-import {beat,bounce,Cross,Grid,KineticTitle,Rail,smooth} from '../components/Motion';
+import {bounce,ramp,smooth} from '../components/Motion';
+import {Art,Cursor,Float,SoftBackdrop,StageTitle,Trace} from '../components/InterfaceMotion';
 
 export const Design:React.FC=()=>{
- const f=useCurrentFrame();const rearrange=smooth(f,36,64);const exit=smooth(f,80,96);
- return <AbsoluteFill style={{background:b.foreground,overflow:'hidden',color:b.background}}>
-  <Grid light/><Rail light number="02"/>
-  <div className="design-canvas" style={{transform:`translateY(${exit*-300}px) scale(${1+exit*.25})`}}>
-   <div className="design-poster" style={{left:116-rearrange*45,top:335+rearrange*35,transform:`translateY(${(1-bounce(f,6))*-480}px) rotate(${-13+rearrange*7}deg)`}}>
-    <div className="poster-monogram">Aa</div><div className="poster-baseline"/>
-    <div className="poster-lines">{[1,2,3,4,5].map(i=><i key={i} style={{width:55+i*22}}/>)}</div>
-   </div>
-   <div className="design-shape-card" style={{right:90,top:440-rearrange*130,transform:`translateX(${(1-bounce(f,12))*600}px) rotate(${10-rearrange*7}deg)`}}>
-    {[0,1,2,3].map(i=><div key={i} style={{borderRadius:i===0||i===3?'50%':'0',background:i%2?b.background:b.accent,transform:`rotate(${i===2?f*.9:0}deg) scale(${.92+beat(f-i*3)*.08})`}}/>)}
-   </div>
-   <div className="design-grid-card" style={{left:145+rearrange*100,top:1170-rearrange*15,transform:`translateY(${(1-bounce(f,18))*520}px) rotate(${-8+rearrange*13}deg)`}}>
-    <div className="grid-block large"/><div className="grid-block"/><div className="grid-block"/><div className="grid-block wide"/>
-   </div>
-   <div className="design-type-card" style={{right:68,top:1190+rearrange*30,transform:`translateY(${(1-bounce(f,24))*540}px) rotate(${12-rearrange*8}deg)`}}><span>Mg</span><i/></div>
+ const f=useCurrentFrame();const organize=smooth(f,34,76);const zoom=smooth(f,98,120);
+ const cursorX=ramp(f,18,47,1000,500);const cursorY=ramp(f,18,47,1550,1340);const click=Math.max(0,1-Math.abs(f-48)/6);
+ return <AbsoluteFill style={{background:'#F0F2F7',overflow:'hidden'}}>
+  <SoftBackdrop/>
+  <div className="camera-layer" style={{transform:`scale(${.94+smooth(f,0,42)*.06+zoom*.9}) translateY(${-zoom*150}px)`,filter:`blur(${zoom*5}px)`,opacity:1-smooth(f,114,120)}}>
+   <Float x={92+organize*30} y={340+organize*24} width={400} seed={1} delay={7} rotate={-7+organize*6} z={2}><div className="visual-card"><Art f={f} variant={0}/><div className="visual-card-footer"><i/><span/><span/></div></div></Float>
+   <Float x={576-organize*42} y={410-organize*45} width={356} seed={3} delay={15} rotate={8-organize*6} z={1}><div className="palette-card"><div className="palette-type">Aa</div><div className="palette-swatches"><i/><i/><i/></div><div className="card-skeleton"><i/><i/></div></div></Float>
+   <Float x={143-organize*10} y={1150+organize*16} width={390} seed={5} delay={23} rotate={-6+organize*5} z={2}><div className="layout-card"><div className="layout-hero"/><div className="layout-columns"><i/><i/><i/></div><div className="card-skeleton"><i/><i/></div></div></Float>
+   <Float x={600-organize*37} y={1200-organize*65} width={315} seed={7} delay={31} rotate={7-organize*5} z={3}><div className="visual-card"><Art f={f} variant={2}/></div></Float>
+   <div className="design-guide-box" style={{transform:`translate(-50%,-50%) scale(${.9+organize*.1})`,opacity:ramp(f,30,47)}}/>
+   <StageTitle text="DESIGN" size={170}/>
+   <Trace f={f} start={38} end={64} path="M90 1120H990M537 1080V1530"/>
+   <Cursor x={cursorX+Math.sin(f/35)*9} y={cursorY+Math.sin(f/29)*12} click={click}/>
+   <div className="selection-chip" style={{left:500+Math.sin(f/35)*9,top:1375+Math.sin(f/29)*12,opacity:ramp(f,48,55)}}><span/>Layout</div>
   </div>
-  <div className="design-title-strip" style={{transform:`translateY(${(1-bounce(f))*140}px) rotate(${exit*-5}deg)`,boxShadow:`0 12px ${30+beat(f)*20}px #386bff22`}}><KineticTitle text={b.design} size={265} color={b.background}/></div>
-  <div className="design-selection" style={{width:790+rearrange*50,transform:`translate(-50%,-50%) rotate(${exit*-5}deg)`}}>{[0,1,2,3].map(i=><span key={i}/>)}</div>
-  <Cross x={908} y={1430}/>
  </AbsoluteFill>;
 };

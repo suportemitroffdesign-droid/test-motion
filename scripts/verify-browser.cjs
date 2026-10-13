@@ -6,7 +6,7 @@ const http=require('node:http');
 const os=require('node:os');
 const {spawn}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
-const video=path.join(root,'out','mitroff-intro-v2.mp4');
+const video=path.join(root,'out','mitroff-intro-v3-preview.mp4');
 const size=fs.statSync(video).size;
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'mitroff-playback-'));
 const server=http.createServer((req,res)=>{
@@ -75,7 +75,7 @@ const send=(method,params={})=>new Promise((resolve,reject)=>{
   const value=result.result.value;
   if(value.error||Math.abs(value.duration-20)>.05||value.width!==1080||value.height!==1920||value.played_seconds<.5||value.decoded_frames<10||value.seek_to<17.9||!value.aac_support)throw new Error(JSON.stringify(value));
   const report={status:'passed',method:'Chromium HTMLVideoElement playback and seek through loopback HTTP',...value};
-  fs.writeFileSync(path.join(root,'out','browser-playback-v2.json'),JSON.stringify(report,null,2)+'\n');
+  fs.writeFileSync(path.join(root,'out','browser-playback-v3.json'),JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify(report,null,2));
  }finally{if(ws)ws.close();if(chrome)chrome.kill('SIGTERM');server.closeAllConnections();server.close();}
 })().catch(error=>{console.error(error.message);process.exitCode=1;});

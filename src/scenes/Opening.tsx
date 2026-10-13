@@ -1,22 +1,21 @@
 import React from 'react';
 import {AbsoluteFill,useCurrentFrame} from 'remotion';
 import {brand as b} from '../brand';
-import {beat,bounce,Cross,Grid,KineticTitle,Rail,ramp,smooth} from '../components/Motion';
+import {bounce,ramp,smooth} from '../components/Motion';
+import {Cursor,OriginalLogo,SoftBackdrop,Trace} from '../components/InterfaceMotion';
 
-export const Opening: React.FC = () => {
-  const f=useCurrentFrame();const p=bounce(f);const close=smooth(f,54,72);
-  return <AbsoluteFill style={{background:b.background,overflow:'hidden'}}>
-    <Grid/><Rail number="01"/>
-    <div className="opening-band" style={{transform:`translateX(${(1-p)*-120}%) rotate(-12deg)`,height:380+beat(f)*10}}/>
-    <div className="open-ring" style={{transform:`translate(-50%,-50%) rotate(${f*.6}deg) scale(${.8+.2*p+close*.6})`,opacity:1-close}}/>
-    {[0,1,2].map(i=><div className="opening-bar" key={i} style={{top:460+i*58,left:90,transform:`scaleX(${smooth(f,2+i*3,14+i*3)})`,width:210+i*75}}/>)}
-    <div className="title-center" style={{transform:`translate(-50%,-50%) scale(${1+.04*beat(f)+close*.45})`,filter:`blur(${close*9}px)`,opacity:1-close}}>
-      <div className="opening-echo"><KineticTitle text={b.opening} outline color={b.accent}/></div>
-      <KineticTitle text={b.opening}/>
-    </div>
-    <div className="opening-underline" style={{width:ramp(f,10,24,0,790),transform:`translateX(${close*900}px)`}}/>
-    <Cross x={92} y={1380}/><Cross x={958} y={538}/>
-    <div className="open-outline" style={{transform:`translateY(${(1-p)*150}px) rotate(${-5+f*.08}deg)`,opacity:ramp(f,8,18)}}/>
-    <div className="blue-corner" style={{transform:`translateY(${(1-bounce(f,10))*600}px)`}}/>
-  </AbsoluteFill>;
+export const Opening:React.FC=()=>{
+ const f=useCurrentFrame();const morph=smooth(f,47,76);const exit=smooth(f,77,90);const p=bounce(f,4,24);
+ const width=890-morph*230;const height=300-morph*144;
+ return <AbsoluteFill style={{background:b.background,overflow:'hidden'}}>
+  <SoftBackdrop dark/>
+  <div className="intro-frame" style={{width:width+40,height:height+40,transform:`translate(-50%,-50%) scale(${1+exit*2})`,opacity:1-exit}}/>
+  <div className="intro-identity" style={{width,height,transform:`translate(-50%,-50%) perspective(1800px) rotateX(${(1-p)*18+Math.sin(f/33)*1.3}deg) rotateY(${Math.cos(f/28)*2}deg) scale(${.9+p*.1+exit*2})`,opacity:1-exit,filter:`blur(${exit*12}px)`}}>
+   <div style={{position:'absolute',inset:0,opacity:1-morph}}><OriginalLogo reveal={smooth(f,4,26)}/></div>
+   <div className="identity-ui" style={{opacity:morph}}><span className="identity-dot"/><strong>MITROFF</strong><div className="identity-button" style={{transform:`scale(${1-(1-Math.abs(Math.sin((f-60)/10)))*.02})`}}><svg width="28" height="28" viewBox="0 0 32 32"><path d="M6 26L26 6M6 6H26V26" stroke="currentColor" strokeWidth="2" fill="none"/></svg></div></div>
+  </div>
+  <Trace f={f} start={5} end={36} path="M95 965V748Q95 710 132 710H942Q978 710 978 748V1110Q978 1148 942 1148H132Q95 1148 95 1110V965"/>
+  <div className="intro-guide" style={{opacity:ramp(f,26,44)*(1-exit),transform:`translateY(${Math.sin(f/28)*7}px)`}}><i/><i/><i/></div>
+  <Cursor x={ramp(f,49,68,980,800)} y={ramp(f,49,68,1330,952)} click={Math.max(0,1-Math.abs(f-70)/6)} light opacity={ramp(f,44,51)*(1-exit)}/>
+ </AbsoluteFill>;
 };

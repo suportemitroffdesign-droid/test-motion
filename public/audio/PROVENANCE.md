@@ -12,4 +12,4 @@ O áudio gerado (esses três WAVs) é disponibilizado sob **CC0 1.0 Universal**,
 
 A logo original continua pertencendo ao seu titular; esta declaração de áudio não concede direitos sobre a marca. Remotion, React, TypeScript e dependências conservam suas próprias licenças.
 
-A versão 2 usa uma batida mais energética, baixos sincopados, stabs e fills de bateria. A mixagem tem resolução musical em 18 segundos e cauda suave até 20 segundos. Sem voz. As batidas principais usam 150 BPM e os efeitos seguem frames específicos do roteiro, inclusive entradas fora da grade musical.
+A versão 3 tem composição nova em Lá menor: graves sincopados, stabs e fills de bateria. A mixagem tem resolução musical em 19 segundos e cauda suave até 20 segundos. Sem voz. As batidas principais usam 120 BPM e os efeitos seguem frames específicos do roteiro, inclusive entradas fora da grade musical.

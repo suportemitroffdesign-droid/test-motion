@@ -1,21 +1,21 @@
 {
-  "version": 2,
-  "bpm": 150,
+  "version": 3,
+  "bpm": 120,
   "sample_rate": 48000,
   "duration": 20.0,
   "target_lufs": -14,
   "true_peak_ceiling_dbtp": -1.5,
   "premaster": {
-    "input_i": "-19.16",
-    "input_tp": "-3.04",
-    "input_lra": "5.70",
-    "input_thresh": "-29.70",
-    "output_i": "-14.30",
+    "input_i": "-20.30",
+    "input_tp": "-3.05",
+    "input_lra": "1.60",
+    "input_thresh": "-30.51",
+    "output_i": "-14.40",
     "output_tp": "-1.50",
-    "output_lra": "0.70",
-    "output_thresh": "-24.62",
+    "output_lra": "0.90",
+    "output_thresh": "-24.51",
     "normalization_type": "dynamic",
-    "target_offset": "0.30"
+    "target_offset": "0.40"
   },
   "method": "Original procedural synthesis; no external samples"
 }

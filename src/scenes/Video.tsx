@@ -1,24 +1,26 @@
 import React from 'react';
 import {AbsoluteFill,useCurrentFrame} from 'remotion';
 import {brand as b} from '../brand';
-import {beat,bounce,Grid,KineticTitle,Rail,ramp,smooth} from '../components/Motion';
+import {ramp,smooth} from '../components/Motion';
+import {Art,Cursor,Float,SoftBackdrop,StageTitle} from '../components/InterfaceMotion';
 import {timing} from '../timing';
 
 export const Video:React.FC=()=>{
- const f=useCurrentFrame();const cut=Math.floor(f/timing.beatFrames);const kick=beat(f);const sweep=smooth(f%(timing.beatFrames*2),0,timing.beatFrames*1.5);
- return <AbsoluteFill style={{background:cut%4===3?b.foreground:b.background,overflow:'hidden'}}>
-  <div className="video-blue-field" style={{transform:`translateY(${-240+cut%3*60}px) rotate(-10deg)`}}/>
-  <Grid/><Rail number="03"/>
-  {[0,1,2].map(i=><div className="video-slice" key={i} style={{top:390+i*110,background:i===1?b.foreground:b.accent,transform:`translateX(${(1-bounce(f,i*3))*1100+(i%2?1:-1)*sweep*100}px) rotate(-8deg)`,opacity:i===2?.45:1}}/>)}
-  <div className="video-title-frame" style={{transform:`translate(-50%,-50%) rotate(${cut%2?2:-2}deg) scale(${1+kick*.035})`}}>
-   <div className="video-echo" style={{transform:`translate(${kick*22}px,${kick*14}px)`}}><KineticTitle text={b.video} size={292} outline color={b.accent}/></div>
-   <KineticTitle text={b.video} size={292}/>
+ const f=useCurrentFrame();const exit=smooth(f,99,120);const segment=Math.min(3,Math.floor(f/30));const localCuts=timing.video_cuts.map(v=>v-210);const cut=Math.max(...localCuts.filter(v=>v<=f),0);const cutPulse=Math.exp(-(f-cut)/4);
+ return <AbsoluteFill style={{background:'#EEF0F6',overflow:'hidden'}}>
+  <SoftBackdrop/>
+  <div className="camera-layer" style={{transform:`scale(${1.05-smooth(f,0,35)*.05+exit*.8}) translateY(${-exit*150}px)`,opacity:1-smooth(f,113,120)}}>
+   <div className="editing-heading"><StageTitle text="EDIÇÃO" size={155}/></div>
+   <Float x={89} y={615} width={900} seed={2} delay={0} z={2}>
+    <div className="editor-shell">
+     <div className="editor-toolbar"><div className="window-dots"><i/><i/><i/></div><div className="editor-tools"><span/><span/><span/></div><div className="play-control" style={{transform:`scale(${1-cutPulse*.09})`}}><svg width="23" height="23" viewBox="0 0 24 24"><path d="M7 4L20 12L7 20Z" fill="currentColor"/></svg></div></div>
+     <div className="editor-canvas"><div className="editor-preview" style={{transform:`scale(${1+cutPulse*.035})`}}><Art f={f+segment*50} variant={segment%3}/><div className="frame-guides"><i/><i/><i/><i/></div></div><div className="editor-inspector"><i/><i/><span/><i/><i/><span/><i/></div></div>
+     <div className="timeline-ruler">{Array.from({length:13},(_,i)=><i key={i}/>)}</div>
+     <div className="editor-timeline">{[0,1,2,3].map(row=><div className="editor-track" key={row}>{Array.from({length:7},(_,i)=><div className="editor-clip" key={i} style={{width:62+(i+row)%3*28,background:row===1?'#E6E9F3':row===3?`${b.accent}22`:b.accent,opacity:.65+i%3*.13,transform:`scaleX(${smooth(f,6+row*3+i,18+row*3+i)})`}}>{row===0?<span style={{background:i===segment?'#fff':'#ffffff66'}}/>:row===3?<svg viewBox="0 0 100 24"><path d="M0 12L5 8L10 15L15 4L20 19L25 10L30 16L35 6L40 20L45 11L50 5L55 18L60 13L65 8L70 19L75 7L80 16L85 10L90 13L100 12" stroke={b.accent} fill="none"/></svg>:null}</div>)}</div>)}<div className="editor-playhead" style={{left:`${ramp(f,0,119,4,93)}%`}}/></div>
+    </div>
+   </Float>
+   <Float x={125} y={1440} width={340} delay={27} seed={6} rotate={-3} z={4}><div className="floating-tool"><span className="tool-icon"><svg width="35" height="35" viewBox="0 0 40 40"><circle cx="9" cy="10" r="5" fill="none" stroke="currentColor" strokeWidth="2"/><circle cx="9" cy="30" r="5" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M13 13L34 34M13 27L34 6" stroke="currentColor" strokeWidth="2"/></svg></span><div><strong>Corte preciso</strong><div className="tool-meter"><i style={{width:`${55+Math.sin(f/15)*18}%`}}/></div></div></div></Float>
+   <Cursor x={ramp(f,7,44,999,685)+Math.sin(f/26)*9} y={ramp(f,7,44,1640,1270)+Math.cos(f/31)*8} click={Math.max(0,1-Math.abs(f-60)/7)}/>
   </div>
-  <div className="film-stack" style={{transform:`translateX(${-sweep*58}px) rotate(7deg)`}}>
-   {[0,1,2,3].map(i=><div className="film-panel" key={i} style={{background:i===cut%4?b.foreground:'#151b32',transform:`translateY(${i===cut%4?-22:0}px)`,borderColor:i===cut%4?b.accent:'#ffffff33'}}><div className="film-art" style={{borderRadius:i%2?'50%':'0',transform:`rotate(${f*1.5+i*30}deg) scale(${.85+kick*.15})`,background:i===cut%4?b.accent:b.foreground}}/></div>)}
-  </div>
-  <div className="video-timeline">{[0,1,2].map(row=><div className="video-track" key={row}>{[0,1,2,3,4,5].map(i=><i key={i} style={{background:row===1?b.foreground:b.accent,opacity:.45+(i%3)*.23,width:55+(i+row)%3*44,transform:`scaleX(${smooth(f,10+row*3+i,22+row*3+i)})`}}/>)}</div>)}<div className="video-playhead" style={{left:`${ramp(f,0,96,4,95)}%`}}/></div>
-  <div className="cut-line" style={{left:`${sweep*130-15}%`,boxShadow:`0 0 ${20+kick*20}px ${b.accent}`}}/>
-  <div className="beat-meter">{Array.from({length:12},(_,i)=><i key={i} style={{height:12+Math.abs(Math.sin((f/timing.beatFrames)*Math.PI+i*.8))*40}}/>)}</div>
  </AbsoluteFill>;
 };

@@ -1,22 +1,22 @@
 import React from 'react';
 import {AbsoluteFill,useCurrentFrame} from 'remotion';
 import {brand as b} from '../brand';
-import {timing} from '../timing';
-import {beat,bounce,Cross,KineticTitle,Rail,ramp,smooth} from '../components/Motion';
+import {bounce,ramp,smooth} from '../components/Motion';
+import {Art,SoftBackdrop,Trace} from '../components/InterfaceMotion';
 
 export const Positioning:React.FC=()=>{
- const f=useCurrentFrame();const starts=timing.position_words.map(frame=>frame-timing.scenes[4]);
- const index=f<starts[1]?0:f<starts[2]?1:2;const local=f-starts[index];
- const size=[151,174,190][index];const exit=smooth(f,84,96);
- return <AbsoluteFill style={{background:index===1?b.background:b.accent,overflow:'hidden'}}>
-  <Rail number="05"/>
-  <div className="position-circle" style={{borderColor:index===1?b.accent:b.foreground,transform:`translate(-50%,-50%) scale(${.62+bounce(local)*.42+exit*.5}) rotate(${f*.8}deg)`}}/>
-  <div className="position-lines" style={{transform:`translateY(${(1-bounce(local))*200}px) rotate(${index===1?12:-12}deg)`}}>{[0,1,2,3,4].map(i=><i key={i} style={{transform:`scaleX(${smooth(local,i,9+i)})`,opacity:.16+i*.11}}/>)}</div>
-  <div className="position-word" key={index} style={{transform:`translate(-50%,-50%) scale(${1+.02*beat(local)+exit*.1})`}}>
-   <KineticTitle text={b.positioning[index]} size={size} delay={f-local} stagger={.3} color={b.foreground}/>
+ const f=useCurrentFrame();const converge=smooth(f,9,66);const compress=smooth(f,66,90);const q=bounce(f,9,25);
+ return <AbsoluteFill style={{background:b.background,overflow:'hidden'}}>
+  <SoftBackdrop dark/>
+  {[0,1,2,3].map(i=>{
+   const starts=[{x:88,y:475},{x:723,y:475},{x:85,y:1200},{x:730,y:1180}];const start=starts[i];const targets=[{x:170,y:530},{x:660,y:535},{x:165,y:1170},{x:655,y:1160}];const target=targets[i];const shrink=.76-compress*.65;
+   return <div className="converging-card" key={i} style={{left:start.x+(target.x-start.x)*converge+(434-target.x)*compress+Math.sin(f/25+i)*10,top:start.y+(target.y-start.y)*converge+(866-target.y)*compress+Math.cos(f/23+i)*10,transform:`perspective(1500px) rotateX(${Math.sin(f/24+i)*6}deg) rotateY(${(i%2?1:-1)*(1-converge)*15}deg) rotateZ(${(i%2?1:-1)*(12-converge*8)}deg) scale(${shrink})`,opacity:1-smooth(f,50,73)}}><Art f={f} variant={i%3}/></div>;
+  })}
+  <div className="presence-message" style={{transform:`translate(-50%,-50%) scale(${.96+q*.04+compress*.045})`}}>
+   <div className="presence-mask"><span style={{transform:`translateY(${(1-bounce(f,2,25))*180}px)`}}>MAIS</span></div>
+   <div className="presence-mask"><span style={{transform:`translateY(${(1-bounce(f,15,25))*180}px)`,color:b.foreground}}>PRESENÇA<span style={{color:b.accent}}>.</span></span></div>
   </div>
-  <div className="position-underline" style={{transform:`translateX(${ramp(local,0,14,-100,0)}%)`}}/>
-  <div className="position-block" style={{transform:`translateX(${(1-bounce(local,4))*500}px) rotate(${45+index*90}deg)`}}/>
-  <Cross x={114} y={508} color={b.foreground}/><Cross x={935} y={1440} color={b.foreground}/>
+  <Trace f={f} start={19} end={55} path="M90 1130C250 1190 829 1190 990 1130"/>
+  <div className="presence-blue-core" style={{transform:`translate(-50%,-50%) scale(${.2+compress*.8})`,opacity:smooth(f,61,82)}}/>
  </AbsoluteFill>;
 };

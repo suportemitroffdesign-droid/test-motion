@@ -1,4 +1,4 @@
-"""MITROFF V2 / 150 BPM electronic score + frame-accurate sound design.
+"""MITROFF V3 / 120 BPM electronic score + frame-accurate sound design.
 Original procedural oscillators, filtered noise and FM. No third-party audio.
 Optional regeneration: Python + numpy + scipy + FFmpeg. WAVs are bundled.
 """
@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'public'/'audio';OUT.mkdir(exist_ok=True,parents=True)
 C=json.loads((ROOT/'scripts'/'audio-cues.json').read_text())
 SR=48000;D=C['duration_frames']/C['fps'];N=int(SR*D);B=60/C['bpm']
-rng=np.random.default_rng(29017)
+rng=np.random.default_rng(431906)
 music=np.zeros((N,2));sfx=np.zeros_like(music)
 def freq(m):return 440*2**((m-69)/12)
 def time(d):return np.arange(round(SR*d))/SR
@@ -28,29 +28,29 @@ def saw(t,hz,harmonics=7):
  return sum(np.sin(2*np.pi*hz*k*t)/k for k in range(1,harmonics+1))/1.8
 
 # Syncopated D-minor groove. The chord sequence follows the six cuts.
-sections=[(0,2.4,[50,57,60,64]),(2.4,3.2,[46,53,57,60]),
- (5.6,3.2,[48,55,58,62]),(8.8,3.2,[53,57,60,64]),
- (12,3.2,[46,53,57,60]),(15.2,2.8,[50,57,60,64])]
+sections=[(0,3,[45,52,55,59]),(3,4,[41,48,52,55]),
+ (7,4,[48,55,59,62]),(11,4,[43,50,55,57]),
+ (15,3,[41,48,52,55]),(18,2,[45,52,55,59])]
 def chord_at(t):return next(notes for start,length,notes in reversed(sections) if t>=start)
 # Tight chord stabs: a rhythmic, slightly detuned supersaw, never a calm pad bed.
-for i in range(45):
+for i in range(38):
  start=i*B
- if start>=18:break
+ if start>=19:break
  offsets=[0,.75] if i%2==0 else [.5]
  for off in offsets:
   at=start+off*B
-  if at>=18:continue
+  if at>=19:continue
   t=time(.32);gate=(1-np.exp(-t*240))*np.exp(-t*12)*envelope(t)
   for k,m in enumerate(chord_at(at)):
    hz=freq(m+12)
    x=.6*saw(t,hz,5)+.4*saw(t,hz*1.003,5)
-   add(music,x*gate,at,.052 if at<5.6 else .067,pan=(k-1.5)*.35)
+   add(music,x*gate,at,.052 if at<7 else .067,pan=(k-1.5)*.35)
    add(music,x*gate,at+B*.75,.011,pan=-(k-1.5)*.35)
 
 # Driving offbeat bass with pitch attack and audible midrange body.
-for i in range(90):
+for i in range(76):
  start=i*B/2
- if start>=18:break
+ if start>=19:break
  m=chord_at(start)[0]-12+(12 if i%8==7 else 0)
  t=time(.195);hz=freq(m)
  phase=2*np.pi*hz*(t+.0018*(1-np.exp(-t*80)))
@@ -61,39 +61,39 @@ for i in range(90):
  add(music,np.tanh(x*1.15)*env,start+.014,gain)
 
 # Kick, dry snare/clap and offbeat hats. Beat is already present at the opening.
-for i in range(45):
+for i in range(38):
  at=i*B
- if at>=18:break
+ if at>=19:break
  t=time(.32);phase=2*np.pi*(49*t+100*.025*(1-np.exp(-t/.025)))
  kick=np.sin(phase)*np.exp(-t*15)+noise(.32,4600)*np.exp(-t*250)*.18
- add(music,kick,at,.43 if at<15.2 else .34)
+ add(music,kick,at,.43 if at<18 else .34)
  if i%2==1:
   t=time(.18)
   clap=noise(.18,[1100,9000],'bandpass')*np.exp(-t*34)
   body=np.sin(2*np.pi*180*t)*np.exp(-t*29)*.22
-  add(music,clap+body,at,.19 if at>=2.4 else .12,pan=.05)
+  add(music,clap+body,at,.19 if at>=3 else .12,pan=.05)
  for off in [0,.5]:
   t=time(.115 if off else .05)
   hh=noise(t[-1]+1/SR,7000,'highpass')*np.exp(-t*(42 if off else 95))
   add(music,hh,at+off*B,.068 if off else .042,pan=.3 if off else -.2)
  # Sparse sixteenth fills at scene boundaries, not busy all the time.
- if i in [5,13,21,29,37]:
+ if i in [5,13,21,29,35]:
   for off in [.5,.75]:
    t=time(.075);x=noise(.075,2500,'highpass')*np.exp(-t*48)
    add(music,x,at+off*B,.095,pan=off-.6)
 
 # Bright rhythmic lead: short FM accents with ping-pong delay, builds from scene 2.
-melody=[74,77,81,84,81,77,76,72]
-for i in range(90):
+melody=[81,76,79,84,83,79,76,72]
+for i in range(76):
  at=i*B/2
- if at>=18:break
- if at<2.4 and i%4:continue
+ if at>=19:break
+ if at<3 and i%4:continue
  if i%8 in [2,6]:continue
- m=melody[i%8]+(-5 if 2.4<=at<5.6 or 12<=at<15.2 else 0)
+ m=melody[i%8]+(-5 if 2.4<=at<7 or 12<=at<18 else 0)
  hz=freq(m);t=time(.45)
  env=(1-np.exp(-t*400))*np.exp(-t*14)
  x=np.sin(2*np.pi*hz*t+2.1*np.exp(-t*25)*np.sin(2*np.pi*hz*2*t))*env
- level=.065 if at<5.6 else .09
+ level=.065 if at<7 else .09
  p=.45 if i%2 else -.45
  add(music,x,at,level,p);add(music,x,at+B*.75,level*.24,-p)
 
@@ -102,7 +102,7 @@ def hit(frame,level=.25):
  t=time(.4);phase=2*np.pi*(55*t+75*.025*(1-np.exp(-t/.025)))
  x=np.sin(phase)*np.exp(-t*19)+noise(.4,3800)*np.exp(-t*130)*.2
  add(sfx,x,frame/30,level)
-for f in C['title_impacts']:hit(f,.3 if f in [0,480] else .24)
+for f in C['title_impacts']:hit(f,.3 if f in [0,C['logo_reveal']] else .24)
 for frame in C['transitions']:
  t=time(.4);env=np.sin(np.pi*np.arange(len(t))/len(t))**2
  x=noise(.4,[850,8500],'bandpass')*env
@@ -113,12 +113,12 @@ for family in ['word_entries','design_details','video_cuts','web_details']:
   x=np.sin(2*np.pi*hz*t+np.sin(2*np.pi*hz*3*t))*np.exp(-t*50)
   add(sfx,x,f/30,.037 if family=='word_entries' else .06,pan=(i%3-1)*.4)
 # Risers carry the ear through major sections without excessive impact noise.
-for end in [5.6,12,15.2]:
+for end in [7,15,18]:
  t=time(.65);env=(t/.65)**2*(1-t/.65)**.25
  x=noise(.65,[1000,7000],'bandpass')*env
  add(sfx,x,end-.65,.14)
 # Strong final logo bloom, then an intentional resolved chord with a clean tail.
-for frame,amp in [(480,.042),(540,.07)]:
+for frame,amp in [(C['logo_reveal'],.045),(C['resolution'],.075)]:
  t=time(2.0);env=(1-np.exp(-t*60))*np.exp(-t*3.5)
  for k,m in enumerate([62,69,72,76]):
   x=(np.sin(2*np.pi*freq(m)*t)+.15*np.sin(2*np.pi*freq(m)*2*t))*env
@@ -144,5 +144,5 @@ measured=json.loads(re.findall(r'\{\s*"input_i".*?\}',result.stderr,re.S)[-1])
 filt=(f"loudnorm=I=-14:TP=-1.5:LRA=7:measured_I={measured['input_i']}:measured_TP={measured['input_tp']}:measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:offset={measured['target_offset']}:linear=true")
 subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-i',str(OUT/'mix-premaster.wav'),'-af',filt,'-ar','48000','-c:a','pcm_s16le',str(OUT/'mitroff-master.wav')],check=True)
 (OUT/'mix-premaster.wav').unlink()
-(OUT/'audio-analysis.json').write_text(json.dumps({'version':2,'bpm':C['bpm'],'sample_rate':SR,'duration':D,'target_lufs':-14,'true_peak_ceiling_dbtp':-1.5,'premaster':measured,'method':'Original procedural synthesis; no external samples'},indent=2))
-print('V2 score + SFX generated: 150 BPM, 48 kHz stereo.')
+(OUT/'audio-analysis.json').write_text(json.dumps({'version':3,'bpm':C['bpm'],'sample_rate':SR,'duration':D,'target_lufs':-14,'true_peak_ceiling_dbtp':-1.5,'premaster':measured,'method':'Original procedural synthesis; no external samples'},indent=2))
+print('V3 original score + SFX generated: 120 BPM, 48 kHz stereo.')
