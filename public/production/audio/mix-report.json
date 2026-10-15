@@ -1,0 +1,38 @@
+{
+  "fps": 30,
+  "duration_frames": 1048,
+  "duration_seconds": 34.93333333333333,
+  "bpm": 132,
+  "voice_model": "Kokoro-82M v1.0, pm_alex, pt-br, native speed 1.0",
+  "voice_over_music_db_during_speech": 14.320066872695985,
+  "target_lufs": -14,
+  "target_true_peak": -1.5,
+  "events": [
+    0,
+    74,
+    165,
+    204,
+    430,
+    453,
+    472,
+    543,
+    585,
+    690,
+    915,
+    948
+  ],
+  "logo_hit": 993,
+  "master_measurement": {
+    "input_i": "-17.36",
+    "input_tp": "-4.06",
+    "input_lra": "3.50",
+    "input_thresh": "-27.73",
+    "output_i": "-14.18",
+    "output_tp": "-1.50",
+    "output_lra": "1.70",
+    "output_thresh": "-24.38",
+    "normalization_type": "dynamic",
+    "target_offset": "0.18"
+  },
+  "third_party_music_samples": false
+}

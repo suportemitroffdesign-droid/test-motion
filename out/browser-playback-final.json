@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "method": "Chromium HTMLVideoElement playback and seek through loopback HTTP",
+  "duration": 34.944,
+  "width": 1080,
+  "height": 1920,
+  "played_seconds": 34.944,
+  "decoded_frames": 1048,
+  "full_playback_completed": true,
+  "seek_to": 33.444,
+  "error": null,
+  "ready_state": 4,
+  "aac_support": "probably"
+}

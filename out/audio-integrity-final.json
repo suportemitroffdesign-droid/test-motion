@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "aac_bitstream_unchanged_after_color_conversion": true,
+  "aac_sha256": "f5e88a78addfa4945970fed41ba569f52f7bd2d97a28e484f2de002558e78597",
+  "mixed_voice_asr_applies_to_final_audio": true
+}

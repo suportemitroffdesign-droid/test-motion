@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "video": {
+    "codec": "h264",
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": 30,
+    "frames": 1048,
+    "duration_seconds": 34.933333,
+    "pixel_format": "yuv420p",
+    "color_space": "bt709",
+    "color_range": "tv"
+  },
+  "audio": {
+    "codec": "aac",
+    "channels": 2,
+    "sample_rate": 48000,
+    "rms": 0.1464424580335617,
+    "peak": 0.8467316031455994,
+    "last_100ms_rms": 0.0002626636705826968,
+    "integrated_lufs": "-14.18",
+    "true_peak_dbtp": "-1.45",
+    "voice_over_music_db": 14.320066872695985
+  },
+  "full_av_decode": "passed",
+  "accidental_black_frames": [],
+  "motion": [
+    {
+      "scene": "hook",
+      "mean_pixel_change_per_frame": 3.4726369380950928,
+      "longest_near_static_run_frames": 10
+    },
+    {
+      "scene": "problem",
+      "mean_pixel_change_per_frame": 0.7919260263442993,
+      "longest_near_static_run_frames": 0
+    },
+    {
+      "scene": "solution",
+      "mean_pixel_change_per_frame": 0.43540874123573303,
+      "longest_near_static_run_frames": 7
+    },
+    {
+      "scene": "transformation",
+      "mean_pixel_change_per_frame": 0.6772983074188232,
+      "longest_near_static_run_frames": 2
+    },
+    {
+      "scene": "closing",
+      "mean_pixel_change_per_frame": 1.6146466732025146,
+      "longest_near_static_run_frames": 41
+    }
+  ],
+  "logo_original_sha256": "12a6cd96469bdf43186efd4b30d5b644a1a4f3e04d8e05d675d095bd5fa17be0",
+  "fast_start": true,
+  "palette": {
+    "black": "#080808",
+    "white": "#FFFFFF",
+    "blue": "#008CFF",
+    "gray": "#171717",
+    "paper": "#F1F4F9"
+  },
+  "mp4_sha256": "2c0ea1c951b4b8404d7f3f9f8ad61bdf6cc7fd7104eedffeb23630f151a013bb",
+  "size_bytes": 11320441
+}

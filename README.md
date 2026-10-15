@@ -1,83 +1,90 @@
-# MITROFF DESIGN — V3 inspirada na linguagem da referência
+# MITROFF DESIGN — Reels final com narração e 3D
 
-Atualização do projeto existente, com novo roteiro de 20 segundos, interfaces arredondadas, sombras suaves, perspectiva discreta, flutuação contínua, controles que reagem e transições por aproximação. Composição **MitroffIntro**: 1080 × 1920, 30 fps, 600 frames. Trilha instrumental eletrônica original nova, 120 BPM, com sound design e sem narração.
+Atualização do projeto Remotion existente. Composição principal: **MitroffReelsFinal**, **1080 × 1920, 30 fps, 1.048 frames, 34,93 segundos**, H.264 Rec.709 e AAC estéreo a 48 kHz. O roteiro foi preservado integralmente; a duração acompanha a fala natural, sem acelerar a voz. A composição anterior, `MitroffIntro`, continua disponível como histórico.
 
-**Esta entrega é uma prévia de movimento: o HEX do azul oficial ainda aguarda confirmação.** O PNG fornecido é preto com transparência, sem azul que possa ser extraído. O valor `#386BFF` da V2 foi mantido como cor de trabalho, não apresentado como azul oficial. Depois da confirmação, atualize `src/brand.ts`, renderize novamente e valide o arquivo final.
+## Assistir e baixar
 
-## Baixar e visualizar sem programar
+Na branch **mitroff-reels-final**, abra a pasta `out` no GitHub e use **Download raw file**:
 
-Na branch `mitroff-reference-v3`:
+- **mitroff-reels-final.mp4**: filme completo com voz, música, efeitos e legendas.
+- **mitroff-reels-projeto.zip**: projeto editável, MP4, fontes, logo original, stems, renders e arquivos Blender.
+- **mitroff-capa.png**: capa vertical 1080 × 1920.
+- **review-final.jpg** e **redesign-review.jpg**: quadros extraídos do MP4.
+- **validation-final.json**, **browser-playback-final.json**, **mixed-voice-asr.json**: verificações do arquivo entregue.
 
-- `out/mitroff-intro-v3-preview.mp4`: prévia com H.264 + AAC estéreo incorporado.
-- `out/mitroff-projeto-v3.zip`: projeto editável completo, MP4 de prévia, logo, fontes, áudio master/stems e scripts.
-- `out/review-v3.jpg`: amostras das seis cenas extraídas do MP4.
-- `out/validation-v3.json` e `out/browser-playback-v3.json`: verificações técnicas do arquivo.
+O MP4 abre diretamente no player do celular ou computador. Para publicar no Instagram, envie o arquivo original ao aparelho. O ZIP pode ser extraído normalmente no Windows. Não há dependência de caminhos internos deste ambiente.
 
-No GitHub, abra o arquivo e use **Download raw file** (seta para baixo). Se necessário, entre na conta com acesso ao repositório. O ZIP pode ser extraído no Windows e o MP4 pode ser aberto diretamente no player. As versões anteriores continuam nas branches `mitroff-logo-audio` e `mitroff-motion-v2`.
+## Direção e cenas
 
-## O que mudou
+Preto `#080808`, branco `#FFFFFF`, azul elétrico `#008CFF` e cinza `#171717`, conforme o último briefing. Ambientes claros dão contraste às interfaces; preto e azul sustentam o gancho e a pergunta final.
 
-- A referência foi analisada antes das mudanças; veja `REFERENCE_NOTES.md`. Não reutilizamos suas marcas, fotos, textos, ícones, frames ou áudio.
-- Cards ganham conteúdo, se reorganizam e mantêm movimento em perspectiva. Os glows e sombras acompanham as camadas.
-- Um controle de identidade se transforma em interface; a cena DESIGN aproxima a câmera para entrar na edição.
-- O editor tem preview, inspetor, cortes, playhead e faixas gráficas. A landing page se monta, recebe clique e se transforma para mobile continuamente.
-- Na mensagem MAIS PRESENÇA., as peças anteriores convergem, preparando a logo final.
-- A logo original está na abertura e no encerramento. `public/logo mitroff3.png` permanece intacto; o SHA-256 é verificado por script. Usa-se o alfa sobre branco, sem redesenho, filtros ou deformação.
-- Os layouts são conceitos autorais, não trabalhos atribuídos a clientes ou resultados fictícios.
+| Cena | Tempo aproximado | Animação |
+|---|---|---|
+| Gancho | 0–4,23 s | Anúncios em perspectiva avançam e desaparecem; PERDENDO entra na palavra da voz. |
+| Problema | 4,23–9,63 s | Smartphone 3D, cartões concorrentes, aplicativos e cursor procurando a oferta. |
+| Solução | 9,63–16,73 s | Olho, coração e cursor 3D; ENTENDER, DESEJAR e AGIR nos tempos da fala. |
+| Transformação | 16,73–25,97 s | Os mesmos elementos se separam em profundidade e se reorganizam: produto, título, preço e botão. |
+| Fechamento | 25,97–34,93 s | Anúncios se afastam, pergunta, comentário 3D, COMENTA PERFIL e logo original. |
+
+O anúncio de fones é um **estudo fictício de redesign**, identificado em tela. Produto, preço e oferta são ilustrativos. Nenhum cliente ou resultado real é atribuído à marca. A referência anterior serviu à análise de movimento; seu vídeo, frames, áudio e fotografias não integram esta entrega.
+
+Produto, smartphone e ícones foram modelados no Blender, com iluminação própria, materiais PBR e renders transparentes de múltiplos ângulos. O Remotion combina esses renders com perspectiva, camadas HTML/SVG, máscaras, springs, interpolação, blur de entrada e movimento contínuo. Não são imagens geradas por IA.
 
 ## Executar e renderizar no Windows
 
 1. Instale **Node.js 22 ou 24 LTS**, com npm.
-2. Extraia o ZIP e abra o Terminal na pasta com `package.json`.
+2. Extraia o ZIP e abra o Terminal na pasta que contém `package.json`.
 3. Execute `npm ci`.
-4. Execute `npm run studio`; abra o endereço exibido e selecione **MitroffIntro**. Clique para iniciar caso o navegador bloqueie áudio automático.
+4. Execute `npm run studio`, abra o endereço exibido e selecione **MitroffReelsFinal**. Clique em reproduzir para habilitar o áudio.
 5. Execute `npm run typecheck`.
-6. Execute `npm run render`. Saída atual: `out/mitroff-intro-v3-preview.mp4`, H.264, AAC 320 kbps, CRF 18.
-7. Frame do encerramento: `npm run still`. Exportação sem som: `npm run render:silent`, em arquivo separado.
+6. Execute `npm run render`. Saída: **out/mitroff-reels-final.mp4**, H.264, AAC 320 kbps, CRF 18, yuv420p.
 
-O Remotion obtém seu navegador quando necessário. Alternativa com Chrome instalado:
+O áudio e os renders 3D já estão incluídos. A renderização normal não exige Python, Blender, modelos de voz ou chaves de API. O Remotion instala seu navegador quando necessário. Para usar seu Chrome, acrescente ao comando de renderização `-- --browser-executable=` seguido do caminho completo do executável entre aspas.
 
-`npm run render -- --browser-executable="C:\Program Files\Google\Chrome\Application\chrome.exe"`
-
-A renderização normal usa o WAV incluído e não exige Python ou FFmpeg separado. Confira a prévia do Reels no aparelho, pois a interface varia. Títulos e logo ficam dentro de margens laterais de segurança; as linhas decorativas podem chegar às bordas.
+`npm run still` exporta a capa. `npm run render:silent` gera outra versão sem som. `npm run render:intro` renderiza a composição antiga.
 
 ## Editar
 
-- `src/brand.ts`: cor, logo e conteúdo principal. O HEX oficial deve ser confirmado pelo usuário.
-- `src/scenes/`: seis cenas editáveis. Algumas palavras funcionais das interfaces estão nesses componentes.
-- `src/components/InterfaceMotion.tsx`: flutuação contínua, títulos, cursor, traçados, arte autoral, logo e portals.
-- `src/components/Motion.tsx`: curvas, spring e carregamento das fontes locais.
-- `src/style.css`: acabamento e layout; a cor de destaque também é usada por `color-mix()` nos glows.
-- `scripts/audio-cues.json`: roteiro e cues compartilhados entre animação e áudio.
-- `public/audio/`: master, música e efeitos separados. Os WAVs gerados são CC0, para uso comercial sem atribuição; a licença não abrange direitos sobre a marca ou dependências.
+- `src/production/Scenes.tsx`: cinco cenas e palavras de destaque.
+- `src/production/Offer.tsx`: anúncio e reorganização dos mesmos elementos.
+- `src/production/production.css`: layout, espaços, tipografia, luz e interfaces.
+- `src/production/palette.json`: cores principais. Ao mudar o azul, substitua também os acentos literais `#008CFF` no CSS; os materiais 3D são editáveis nos arquivos Blender.
+- `src/production/engine.tsx`: springs, interpolação, sprites 3D, cursor e revelação da logo.
+- `src/production/Production.tsx`: sequências, master e legendas.
+- `scripts/production/narration-script.json`: texto falado integral.
+- `src/production/voice-timing.json`: cenas e tempos de cada palavra, extraídos dos fonemas efetivamente sintetizados. Se mudar a fala, regenere voz, timing e mixagem juntos.
 
-Para regenerar o áudio, opcionalmente instale Python, numpy, scipy e FFmpeg e execute `python scripts/generate-audio.py`. Não há samples ou chaves de API. Anton e Space Grotesk estão incluídas localmente com licenças OFL em `public/fonts/`.
+A logo `public/logo mitroff3.png` é exatamente o PNG recebido no ZIP do usuário. Transparência e proporções intactas, sem filtro ou deformação; a revelação usa máscara externa. SHA-256 verificado contra `scripts/logo-source.json`.
 
-## Roteiro
+## Áudio e licenças
 
-| Cena | Frames (fim exclusivo) | Conteúdo |
-|---|---|---|
-| 1 | 0–90 | Logo original / MITROFF; traçados viram controle de interface |
-| 2 | 90–210 | DESIGN; composições em perspectiva se reorganizam |
-| 3 | 210–330 | EDIÇÃO; zoom, preview, timeline e cortes |
-| 4 | 330–450 | LANDING PAGES; montagem, clique e transformação responsiva |
-| 5 | 450–540 | MAIS PRESENÇA.; convergência das peças |
-| 6 | 540–600 | Logo original; brilho discreto e resolução musical |
+Voz neural masculina brasileira **pm_alex**, Kokoro-82M v1.0, idioma `pt-br`, velocidade nativa 1.0. Não é clonagem de voz do usuário. O modelo tem licença Apache 2.0; seus arquivos não são redistribuídos. Licenças e fontes documentadas em `public/production/PROVENANCE.md`.
 
-A trilha a 120 BPM permite alinhar as mudanças de cena ao roteiro em segundos inteiros. A música tem novos graves, stabs, bateria e sequência melódica; impactos e sons de interface acompanham o cue sheet. Os ataques se retiram perto do fim e uma resolução em 19 s deixa a cauda chegar suavemente a 20 s.
+Nova trilha eletrônica original a **132 BPM**, bateria, baixo, stabs, detalhes digitais, whooshes e impactos. Sem música comercial, samples ou áudio da referência. Música e SFX gerados: CC0, uso comercial sem crédito. Marca, ferramentas e modelo de voz conservam seus direitos e licenças.
 
-## Verificação no ambiente Linux
+O master usa ducking durante a fala, tratamento de voz, normalização e resolução final suave. `public/production/audio` contém master, voz, música, efeitos e cinco trechos originais separados. Fontes Space Grotesk/Anton com licenças OFL em `public/fonts`. Ícones Instagram/WhatsApp: Simple Icons, CC0, sem indicação de vínculo comercial. Licença Remotion: https://www.remotion.dev/license.
 
-`npm ci --cache /tmp/mitroff-npm --no-audit --no-fund`
+## Regeneração opcional
 
-`npm run typecheck`
+Não é necessária para assistir, publicar ou renderizar o projeto incluído.
 
-`npm run studio -- --host=0.0.0.0 --port=3000 --no-open`
+- Python 3.12: `pip install -r scripts/production/requirements-voice.txt` para voz/ASR; `requirements-mix.txt` para música. FFmpeg/FFprobe e os requisitos de fonemização do kokoro-onnx devem estar instalados.
+- Baixe os arquivos oficiais listados em `public/production/PROVENANCE.md` para a pasta `models` na raiz, ou configure a variável **MITROFF_MODELS**. Confira os hashes.
+- `python scripts/production/generate-voice.py`, depois `python scripts/production/mix-soundtrack.py`; renderize o vídeo novamente.
+- ASR opcional: `python scripts/production/transcribe-voice.py`; `--mixed` verifica a voz no MP4. Requer Whisper-base em `models/sherpa-onnx-whisper-base`, fonte documentada na procedência.
+- Blender 4.x: `blender --background --python scripts/production/render-assets.py -- product`. Opções: `product`, `phone`, `eye`, `heart`, `cursor`, `comment`. Para telefone, execute antes `python scripts/production/create-phone-texture.py` (Pillow). Os seis arquivos `.blend` também podem ser editados diretamente.
 
-`npm run render -- --browser-executable=/usr/bin/chromium --concurrency=2`
+## Verificação no Linux
 
-`python3 scripts/verify-output.py`: exige numpy e FFmpeg/FFprobe; conta frames, decodifica vídeo e áudio, verifica níveis, final suave, streaming e hash do PNG.
+```bash
+npm run typecheck
+npm run studio -- --host=0.0.0.0 --port=3000 --no-open
+npm run render -- --browser-executable=/usr/bin/chromium --concurrency=3
+python3 scripts/production/verify-final.py
+node scripts/production/verify-browser.cjs /usr/bin/chromium
+python3 scripts/production/package-project.py
+```
 
-`node scripts/verify-browser.cjs`: verifica reprodução real e busca para 18 s no Chromium, via HTTP local. Aceita o executável do navegador como primeiro argumento.
+O verificador decodifica todo o MP4, conta frames, confere codecs/resolução/áudio, quadros pretos acidentais, movimento, final sonoro, streaming progressivo e integridade da logo. O navegador reproduz o MP4 por HTTP local e busca o encerramento. ASR é uma checagem de conteúdo, não uma avaliação humana da interpretação vocal. Quadros do MP4 são extraídos para revisão visual das cinco cenas e da transformação.
 
-A validação técnica da prévia não confirma a cor oficial nem representa publicação no Instagram. O Studio precisa ser reiniciado após restaurar o ambiente. Licença do Remotion: https://www.remotion.dev/license.
+O Studio deve ser iniciado novamente após restaurar o ambiente. O projeto entregue já inclui os assets necessários à renderização normal.

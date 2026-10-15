@@ -1,13 +1,14 @@
 {
   "name": "mitroff-intro",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "typecheck": "tsc --noEmit",
-    "render": "remotion render src/index.ts MitroffIntro out/mitroff-intro-v3-preview.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=320k --pixel-format=yuv420p",
-    "still": "remotion still src/index.ts MitroffIntro out/preview-v3.png --frame=540",
-    "render:silent": "remotion render src/index.ts MitroffIntro out/mitroff-intro-v3-silent.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=320k --pixel-format=yuv420p --muted"
+    "render": "remotion render src/index.ts MitroffReelsFinal out/mitroff-reels-final.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=320k --pixel-format=yuv420p --color-space=bt709",
+    "still": "remotion still src/index.ts MitroffReelsFinal out/mitroff-capa.png --frame=105",
+    "render:silent": "remotion render src/index.ts MitroffReelsFinal out/mitroff-reels-silent.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=320k --pixel-format=yuv420p --muted --color-space=bt709",
+    "render:intro": "remotion render src/index.ts MitroffIntro out/mitroff-intro-v3-preview.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=320k --pixel-format=yuv420p"
   },
   "dependencies": {
     "@remotion/cli": "4.0.535",

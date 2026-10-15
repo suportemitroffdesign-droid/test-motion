@@ -1,3 +1,5 @@
+> Nota histórica da V3. A produção final segue o novo roteiro de cinco cenas, com narração e azul #008CFF confirmado no briefing definitivo. Consulte README.md e public/production/PROVENANCE.md. As observações abaixo registram a etapa anterior.
+
 # Análise da referência e aplicação autoral — V3
 
 Referência enviada pelo usuário: vídeo vertical, 720 × 1280, 30 fps, 34,62 s. Inspeção por amostras ao longo de toda a duração e sequências mais densas de frames em momentos de transformação. O arquivo, seus frames, áudio, marcas, fotos e textos não são incluídos no projeto distribuído.

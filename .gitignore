@@ -1,3 +1,7 @@
 node_modules/
 out/
 .remotion/
+models/
+.venv/
+__pycache__/
+*.blend1
